@@ -3,8 +3,6 @@ export class Boot extends Phaser.Scene {
         this.load.image("bullet", "assets/img/bullet.png");
         this.load.image("ground", "assets/img/ground.png");
         this.load.image("hay", "assets/img/hay.png");
-        this.load.image("joystick", "assets/img/joystick.png");
-        this.load.image("joystick-orbit", "assets/img/joystick-orbit.png");
         this.load.image("t-blue", "assets/img/t-blue.png");
         this.load.image("t-green", "assets/img/t-green.png");
         this.load.image("t-red", "assets/img/t-red.png");

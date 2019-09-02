@@ -1,4 +1,5 @@
 import {Bullet} from "./game-objects/Bullet";
+import {Tank} from "./game-objects/Tank";
 
 export class Playground extends Phaser.Scene {
     private cursors;
@@ -7,6 +8,7 @@ export class Playground extends Phaser.Scene {
     private currentSpeed = 0;
     private fireRate = 5;
     private nextFire = 0;
+    private isTankMoving = false;
 
     public create(): void {
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -16,11 +18,16 @@ export class Playground extends Phaser.Scene {
         let land = this.add.tileSprite( 0, 0, 2000, 2000, 'ground');
         this.land = land;
 
-        let tank = this.physics.add.sprite(0, 0, 't-green');
-        tank.setOrigin(0.5, 0.5);
-        tank.setDrag(0.2);
-        tank.setScale(0.4)
-        tank.setMaxVelocity(400, 400);
+        let tanks = this.physics.add.group({classType: Tank});
+        let tRed = new Tank(this, 't-red', 10);
+        let tBlue = new Tank(this, 't-blue', 20);
+        let tGreen = new Tank(this, 't-green', 25);
+        tanks.addMultiple([tRed, tBlue, tGreen]);
+        tRed.setOrigin(0.5, 0.5);
+        tRed.setDrag(0.2);
+        tRed.setScale(0.4);
+        tRed.setMaxVelocity(400, 400);
+        let tank = tanks.get().setActive(true).setVisible(true);
         this.cameras.main.startFollow(tank, true,0.05,0.05);
         this.tank = tank;
 
@@ -34,13 +41,22 @@ export class Playground extends Phaser.Scene {
         this.physics.add.collider(tank, wall);
         this.physics.add.collider(tank, wall);
 
-
-
         let playerBullets = this.physics.add.group({classType: Bullet, runChildUpdate: true, key: 'bullet'});
 
-        this.input.on('pointerdown', function (pointer, time, lastFired) {
+        const ui = this.scene.get('UI');
+        ui.events.on('joystickdown', (angle) => {
+            this.isTankMoving = true;
+        });
+        ui.events.on('joystickmove', (angle) => {
+            // todo: remove Math.PI / 2
+            this.tank.rotation = angle - Math.PI / 2;
+        });
+        ui.events.on('joystickup', (angle) => {
+            this.isTankMoving = false;
+        });
+        ui.events.on('fire', () => {
             // Get bullet from bullets group
-            var bullet = playerBullets.get().setActive(true).setVisible(true);
+            let bullet = playerBullets.get().setActive(true).setVisible(true);
 
             if (bullet) {
                 // todo: remove math.pi / 2
@@ -61,20 +77,15 @@ export class Playground extends Phaser.Scene {
                     bullet.setActive(false).setVisible(false);
                 })
             }
-        }, this);
+        });
+
+        ui.events.on('tankchanged', () => {
+
+        });
     }
 
     public update () {
-        if (this.cursors.left.isDown)
-        {
-            this.tank.angle -= 4;
-        }
-        else if (this.cursors.right.isDown)
-        {
-            this.tank.angle += 4;
-        }
-
-        if (this.cursors.up.isDown)
+        if (this.isTankMoving)
         {
             this.currentSpeed = 300;
         }
@@ -91,7 +102,7 @@ export class Playground extends Phaser.Scene {
             this.physics.velocityFromRotation(this.tank.rotation + Math.PI / 2, this.currentSpeed, this.tank.body.velocity);
         }
 
-        this.land.tilePositionX = -this.cameras.main.x;
-        this.land.tilePositionY = -this.cameras.main.y;
+        /*this.land.tilePositionX = -this.cameras.main.x;
+        this.land.tilePositionY = -this.cameras.main.y;*/
     }
 }
