@@ -6,9 +6,7 @@ export class Boot extends Phaser.Scene {
         this.load.image("t-blue", "assets/img/t-blue.png");
         this.load.image("t-green", "assets/img/t-green.png");
         this.load.image("t-red", "assets/img/t-red.png");
-        this.load.image("wall1", "assets/img/wall1.png");
-        this.load.image("wall2", "assets/img/wall2.png");
-        this.load.image("wall3", "assets/img/wall3.png");
+        this.load.image("wall", "assets/img/wall.png");
     }
 
     public create(): void {

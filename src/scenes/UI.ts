@@ -43,13 +43,13 @@ export class UI extends Phaser.Scene {
         tanksCP.add(tanksBg);
         const tanks =
             [
-                this.add.sprite(-100, 0, 't-red').setScale(0.4).setInteractive().setAlpha(.4),
-                this.add.sprite(0, 0, 't-blue').setScale(0.4).setInteractive().setAlpha(.4),
+                this.add.sprite(-100, 0, 't-red').setScale(0.4).setInteractive().setAlpha(0.4),
+                this.add.sprite(0, 0, 't-blue').setScale(0.4).setInteractive().setAlpha(0.4),
                 this.add.sprite(100, 0, 't-green').setScale(0.4).setInteractive(),
             ];
         const switchTank = (index: number) => {
             tanks.forEach((tank: Sprite) => {
-                tank.alpha = .4;
+                tank.alpha = 0.4;
             });
             tanks[index].alpha = 1;
         };

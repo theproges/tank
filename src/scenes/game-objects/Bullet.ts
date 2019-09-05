@@ -4,7 +4,6 @@ export class Bullet extends Phaser.GameObjects.Sprite {
     private direction;
     private xSpeed;
     private ySpeed;
-    private _damage = 10;
 
     constructor(scene: Phaser.Scene) {
         super(scene, 0, 0, 'bullet');
@@ -15,19 +14,14 @@ export class Bullet extends Phaser.GameObjects.Sprite {
         this.ySpeed = 0;
     }
 
-    public get damage(): number {
-        return this._damage;
-    }
-
     public fire (x: number, y: number, rotation: number) {
-        this.setPosition(x, y); // Initial position
+        this.setPosition(x, y);
 
         this.setActive(true);
         this.setVisible(true);
         this.xSpeed = this.speed * Math.cos(rotation);
         this.ySpeed = this.speed * Math.sin(rotation);
 
-        //todo: remove math.pi / 2
         this.rotation = rotation + Math.PI / 2;
         this.born = 0;
     }
@@ -35,8 +29,7 @@ export class Bullet extends Phaser.GameObjects.Sprite {
         this.x += this.xSpeed * delta;
         this.y += this.ySpeed * delta;
         this.born += delta;
-        if (this.born > 1000)
-        {
+        if (this.born > 1000) {
             this.setActive(false);
             this.setVisible(false);
         }
