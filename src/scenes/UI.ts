@@ -10,10 +10,10 @@ export class UI extends Phaser.Scene {
     }
 
     preload(): void {
-        this.load.image("joystick", "assets/img/joystick.png");
-        this.load.image("joystick-orbit", "assets/img/joystick-orbit.png");
-        this.load.image("red-btn", "assets/img/red-btn.png");
-        this.load.image("control-panel", "assets/img/control-panel.png");
+        this.load.image("joystick", "assets/joystick.png");
+        this.load.image("joystick-orbit", "assets/joystick-orbit.png");
+        this.load.image("red-btn", "assets/red-btn.png");
+        this.load.image("control-panel", "assets/control-panel.png");
     }
 
     create(): void {
