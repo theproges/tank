@@ -2,14 +2,11 @@ import Point = Phaser.Geom.Point;
 import Sprite = Phaser.GameObjects.Sprite;
 
 export class Joystick extends Phaser.Physics.Arcade.Sprite {
-    private draggerW = 200;
-    private draggerH = 200;
     private distance = 0;
     private draggerAngle = 0;
     private isBeingDragged = false;
     private pin: Sprite;
     private dragger: Sprite;
-
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, 0, 0, 'joystick-orbit');
@@ -29,7 +26,7 @@ export class Joystick extends Phaser.Physics.Arcade.Sprite {
         scene.input.setDraggable(dragger);
         /* Set flags on drag */
 
-        dragger.on('dragstart', () => {
+        dragger.on('pointerdown', () => {
             this.onDragStart();
         });
         dragger.on('dragend', () => {
@@ -56,11 +53,11 @@ export class Joystick extends Phaser.Physics.Arcade.Sprite {
         container.add(this.dragger);
         container.add(this.pin);
     }
-    private onDragStart(){
+    private onDragStart() {
         this.isBeingDragged = true;
         this.onDown();
     }
-    private onDragEnd(){
+    private onDragEnd() {
         this.isBeingDragged = false;
         /* Reset pin and dragger position */
         this.dragger.setPosition(0, 0);

@@ -49,20 +49,16 @@ export class Tank extends Phaser.Physics.Arcade.Sprite {
     }
 
     public update(): void {
-        if (this.isTankMoving)
-        {
+        if (this.isTankMoving) {
             this.currentSpeed = 300;
         }
-        else
-        {
-            if (this.currentSpeed > 0)
-            {
+        else {
+            if (this.currentSpeed > 0) {
                 this.currentSpeed -= 4;
             }
         }
 
-        if (this.currentSpeed > 0)
-        {
+        if (this.currentSpeed > 0) {
             this.scene.physics.velocityFromRotation(this.rotation + Math.PI / 2, this.currentSpeed, this.body.velocity);
         }
     }

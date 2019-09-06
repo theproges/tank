@@ -2,7 +2,7 @@ import {Tank} from "./game-objects/Tank";
 import Group = Phaser.Physics.Arcade.Group;
 import {Blocker} from "./game-objects/Blocker";
 import * as Phaser from "phaser";
-import {MapService} from "../services/MapService";
+import {MapService} from "./services/MapService";
 
 export class Playground extends Phaser.Scene {
     private map: MapService;
@@ -11,7 +11,6 @@ export class Playground extends Phaser.Scene {
     public create(): void {
         this.map = new MapService(this);
         this.map.init();
-
         this.tanks = this.physics.add.group({runChildUpdate: true});
         this.tanks.addMultiple([
             new Tank(this, 't-red', 10),
@@ -40,6 +39,7 @@ export class Playground extends Phaser.Scene {
             tank.setPosition(activeTank.x, activeTank.y)
         }
         this.cameras.main.startFollow(tank, true, 0.05, 0.05);
+        this.map.setPlayer(tank);
         tank.setActive(true).setVisible(true);
     }
 

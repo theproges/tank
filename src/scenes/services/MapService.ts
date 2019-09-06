@@ -1,8 +1,8 @@
-import {Blocker} from "../scenes/game-objects/Blocker";
+import {Blocker} from "../game-objects/Blocker";
 import * as Phaser from "phaser";
 import Point = Phaser.Geom.Point;
 import Container = Phaser.GameObjects.Container;
-import {Tank} from "../scenes/game-objects/Tank";
+import {Tank} from "../game-objects/Tank";
 import Group = Phaser.GameObjects.Group;
 
 interface IChunk {
@@ -10,8 +10,6 @@ interface IChunk {
     position: Point;
     bounds: Phaser.Geom.Rectangle;
     renderable: boolean;
-    current: boolean;
-    // todo: should I need this field
     edges: IChunk[];
     blockerGroup: Group;
     landGroup: Group;
@@ -27,23 +25,18 @@ export class MapService {
     private currentChunk: IChunk;
     private landLayer: Container;
     private blockerLayer: Container;
-    private playerLayer: Container;
-    // todo: is this OK to work with game-objects?
     private blockers: Blocker[] = [];
     constructor (private scene: Phaser.Scene) {}
 
     public init(): void {
         this.landLayer = this.scene.add.container(0, 0);
         this.blockerLayer = this.scene.add.container(0, 0);
-        this.playerLayer = this.scene.add.container(0, 0);
 
         const mainChunk = this.createChunk(0,0);
         mainChunk.renderable = true;
-        mainChunk.current = true;
         this.currentChunk = mainChunk;
     }
 
-    // todo: is this method need to be?
     public setPlayer(tank: Tank): void {
         this.player = tank;
     }
@@ -77,14 +70,12 @@ export class MapService {
     }
 
     public refreshMap(x: number, y: number): void {
-        this.currentChunk.current = false;
         this.currentChunk = null;
 
         for (let i = 0, len = this.chunkList.length; i < len; i++) {
             const chunk = this.chunkList[i];
             if (chunk.bounds.contains(x, y)) {
                 this.currentChunk = chunk;
-                chunk.current = true;
                 this.refreshNeighbors(chunk);
                 this.createNeighbors(chunk, true);
                 break;
@@ -126,8 +117,6 @@ export class MapService {
         let stepX = chunk.bounds.width;
         let stepY = chunk.bounds.height;
         let currentY = startY;
-        //todo: separate on different methods
-        // todo: optimize it
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 if (chunk.edges[edgeIndex]) {
@@ -143,8 +132,7 @@ export class MapService {
                         continue;
                     }
 
-                    // todo: fix it
-                    if (renderableChunk.bounds.contains(startX+10, currentY+10)) {
+                    if (renderableChunk.bounds.contains(startX, currentY)) {
                         chunk.edges[edgeIndex] = renderableChunk;
                         break;
                     }
@@ -166,7 +154,7 @@ export class MapService {
         let currentY = startY;
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                if (!chunk.edges[edgeIndex] && !chunk.bounds.contains(startX+10, currentY+10)) {
+                if (!chunk.edges[edgeIndex] && !chunk.bounds.contains(startX, currentY)) {
                     const newChunk = this.createChunk(startX, currentY);
                     newChunk.renderable = renderable;
                     chunk.edges[edgeIndex] = newChunk;
@@ -185,14 +173,13 @@ export class MapService {
             position: new Point(x,y),
             bounds: null,
             renderable: false,
-            current: false,
             edges: [],
             blockerGroup: this.scene.add.group({classType: Blocker}),
             landGroup: this.scene.add.group(),
         };
         const tileSize = this.chunkSize * this.cellSize;
-        let land = this.scene.add.tileSprite( x, y, tileSize, tileSize, 'ground');
-        land.setOrigin(0,0);
+        let land = this.scene.add.tileSprite(x, y, tileSize, tileSize, 'ground');
+        land.setOrigin(0.5,0.5);
         this.landLayer.add(land);
         chunk.landGroup.add(land);
         for (let xIndex = 0; xIndex < this.chunkSize; xIndex++) {
@@ -228,8 +215,6 @@ export class MapService {
             this.renderableChunkList.splice(index, 1);
         }
         chunk.renderable = false;
-        chunk.current = false;
-
 
         const lands = chunk.landGroup.getChildren();
         const blockers = chunk.blockerGroup.getChildren();
@@ -242,8 +227,10 @@ export class MapService {
             this.blockerLayer.remove(blocker);
         });
 
+        const startIndex = this.blockers.indexOf(chunk.blockerGroup.getFirst(true));
+        this.blockers.splice(startIndex, blockers.length);
+
         chunk.landGroup.clear(true, true);
         chunk.blockerGroup.clear(true, true);
-        // todo remove from blockers array
     }
 }
