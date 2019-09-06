@@ -1,5 +1,9 @@
+/**
+ * Carrier of damage
+ */
 export class Bullet extends Phaser.GameObjects.Sprite {
     private speed;
+    // time of living in ms
     private born;
     private direction;
     private xSpeed;

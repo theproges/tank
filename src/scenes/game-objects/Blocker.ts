@@ -1,3 +1,6 @@
+/**
+ * Blocker for tanks
+ */
 export class Blocker extends Phaser.Physics.Arcade.Sprite {
     constructor
     (
@@ -21,6 +24,7 @@ export class Blocker extends Phaser.Physics.Arcade.Sprite {
     public isAlive(): boolean {
         return this.health > 0 || this.immortal;
     }
+    // remove from memory
     public dispose(): void {
         this.destroy(true);
     }

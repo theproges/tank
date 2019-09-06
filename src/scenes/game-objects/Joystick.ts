@@ -1,6 +1,9 @@
 import Point = Phaser.Geom.Point;
 import Sprite = Phaser.GameObjects.Sprite;
 
+/**
+ * Movement control element
+ */
 export class Joystick extends Phaser.Physics.Arcade.Sprite {
     private distance = 0;
     private draggerAngle = 0;
@@ -12,11 +15,11 @@ export class Joystick extends Phaser.Physics.Arcade.Sprite {
         super(scene, 0, 0, 'joystick-orbit');
         this.setOrigin(0.5, 0.5);
 
-        /* Pin indicator - what players think they drag */
+        // pin indicator - what players think they drag
         this.pin = scene.add.sprite(0, 0, 'joystick');
         this.pin.setScale(0.5);
         this.pin.setOrigin(0.5, 0.5);
-        /* Invisible sprite that players actually drag */
+        // ivisible sprite that players actually drag
         let dragger = scene.add.sprite(0, 0, null);
         dragger.width = this.width;
         dragger.height = this.height;
@@ -24,9 +27,8 @@ export class Joystick extends Phaser.Physics.Arcade.Sprite {
         dragger.setOrigin(0.5, 0.5);
         dragger.setInteractive();
         scene.input.setDraggable(dragger);
-        /* Set flags on drag */
 
-        dragger.on('pointerdown', () => {
+        dragger.on('dragstart', () => {
             this.onDragStart();
         });
         dragger.on('dragend', () => {
@@ -38,16 +40,19 @@ export class Joystick extends Phaser.Physics.Arcade.Sprite {
                 let angle = this.draggerAngle = Phaser.Math.Angle.Between(0, 0, dragX, dragY);
                 let distance = this.distance = Point.GetMagnitude(new Point(dragX, dragY));
                 this.pin.setPosition(dragX, dragY);
+                // checking if dragger is on orbit
                 if (distance > 85) {
                     let point = new Point(dragX,dragY);
                     Point.SetMagnitude(point, 85);
                     this.pin.setPosition(point.x, point.y);
                 }
+                // dragger were moved
                 this.onMove(angle);
             }
         });
         this.dragger = dragger;
 
+        // compile all details
         const container = this.scene.add.container(x, y);
         container.add(this);
         container.add(this.dragger);
@@ -59,7 +64,7 @@ export class Joystick extends Phaser.Physics.Arcade.Sprite {
     }
     private onDragEnd() {
         this.isBeingDragged = false;
-        /* Reset pin and dragger position */
+        // reset pin and dragger position
         this.dragger.setPosition(0, 0);
         this.pin.setPosition(0, 0);
         this.onUp(this.angle);

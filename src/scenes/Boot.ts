@@ -1,3 +1,6 @@
+/**
+ * Load game resources
+ */
 export class Boot extends Phaser.Scene {
     public preload(): void {
         this.load.image("bullet", "assets/bullet.png");
