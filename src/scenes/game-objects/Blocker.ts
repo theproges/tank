@@ -21,4 +21,10 @@ export class Blocker extends Phaser.Physics.Arcade.Sprite {
     public isAlive(): boolean {
         return this.health > 0 || this.immortal;
     }
+    public kill(): void {
+        // todo: animation
+    }
+    public dispose(): void {
+        this.destroy(true);
+    }
 }

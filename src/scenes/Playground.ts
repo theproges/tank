@@ -11,14 +11,20 @@ export class Playground extends Phaser.Scene {
     public create(): void {
         this.map = new MapService(this);
         this.map.init();
+
         this.tanks = this.physics.add.group({runChildUpdate: true});
         this.tanks.addMultiple([
             new Tank(this, 't-red', 10),
             new Tank(this, 't-blue', 20),
             new Tank(this, 't-green', 25),
         ]);
-        this.activateTank(this.tanks.getFirstDead());
+        const startX = 200;
+        const startY = 200;
+        this.activateTank(this.tanks.getLast(false).setPosition(startX, startY));
+        this.map.addCollider(this.tanks);
+        this.map.clearArea(startX, startY);
         this.map.setPlayer(this.tanks.getFirst(true));
+        this.map.refreshMap(startX, startY);
         this.setUIHandlers();
     }
 
@@ -28,13 +34,13 @@ export class Playground extends Phaser.Scene {
 
     private activateTank(tank: Tank): void {
         const activeTank = this.tanks.getFirst(true) as Tank;
-        const position = this.map.getPlayerPosition();
         if (activeTank) {
             tank.rotation = activeTank.rotation;
             activeTank.setActive(false).setVisible(false);
+            tank.setPosition(activeTank.x, activeTank.y)
         }
         this.cameras.main.startFollow(tank, true, 0.05, 0.05);
-        tank.setActive(true).setVisible(true).setPosition(position.x, position.y);
+        tank.setActive(true).setVisible(true);
     }
 
     private setUIHandlers(): void {
